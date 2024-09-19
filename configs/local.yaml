@@ -1,7 +1,7 @@
 migrate_source: "file://database/migration"
 
 database:
-  source: "postgresql://postgres:postgres@localhost:5432/decentralized_walletdb?sslmode=disable"
+  source: "postgresql://postgres:postgres@localhost:5432/you_mealdb?sslmode=disable"
   max_conns: 10
   min_conns: 0
   max_conn_life_time: 30m
