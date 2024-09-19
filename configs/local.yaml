@@ -1,0 +1,29 @@
+migrate_source: "file://database/migration"
+
+database:
+  source: "postgresql://postgres:postgres@localhost:5432/decentralized_walletdb?sslmode=disable"
+  max_conns: 10
+  min_conns: 0
+  max_conn_life_time: 30m
+  max_conn_idle_time: 15m
+  health_check_period: 1m
+  connect_timeout: 5m
+
+redis_source: "redis://:@localhost:6379/0"
+
+http_server:
+  address: "localhost:8080"
+  read_timeout: 15s
+  write_timeout: 15s
+  idle_timeout: 30s
+  max_header_bytes: 1048576
+
+logs:
+  info_path: "logs/info.log"
+  debug_path: "logs/debug.log"
+  error_path: "logs/error.log"
+  warn_path: "logs/warn.log"
+  access_path: "logs/access.log"
+  max_size: 100
+  max_age : 30
+  max_backups: 5 
