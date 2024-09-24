@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	cfg := config.MustLoad()	
+	cfg := config.MustLoad()
 
 	accessLogger := logger.InitAccessLog(cfg.Logs)
 
@@ -24,7 +24,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("error when to init logger: %s", err.Error())
 	}
-
 
 	if err := migration.InitMigrationDB(cfg.MigrateSource, cfg.Database.Source); err != nil {
 		log.Fatalf("error when to init migration: %s", err.Error())
@@ -44,7 +43,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("eror when  to connect redis: %s", err.Error())
 	}
-	
+
 	_ = cacherepository.NewCacheRepository(rdb)
 
 	repos := repository.NewRepository(db, logger)

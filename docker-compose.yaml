@@ -1,14 +1,30 @@
-version: "3.9"
+version: '3.9'
+
 services:
-  postgres:
-    image: postgres:16.4-alpine3.20
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=simple_bank
-  api:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
+    env_file:
+      - .env
     ports:
-      - "8080:8080"
+      - 8081:8080
+    depends_on:
+      - postgres
+      - redis
+  postgres:
+    restart: always
+    image: postgres:16.4-alpine3.20
+    ports:
+      - "5439:5432"
+    environment:
+      POSTGRES_USER: ${DOCKER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DOCKER_POSTGRES_PASSWORD}
+  redis:
+    restart: always
+    image: redis:7.4.0-alpine
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${DOCKER_REDIS_PASSWORD}
+      - REDIS_PORT=${DOCKER_REDIS_PORT}
