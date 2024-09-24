@@ -10,20 +10,23 @@ import (
 )
 
 type Handler struct {
-	services     *service.Service
-	accessLogger zerolog.Logger
-	env          string
+	services      *service.Service
+	accessLogger  zerolog.Logger
+	env           string
+	limitCategory int
 }
 
 func NewHandler(
 	services *service.Service,
 	accessLogger zerolog.Logger,
 	env string,
+	limitCategory int,
 ) *Handler {
 	return &Handler{
 		services:     services,
 		accessLogger: accessLogger,
 		env:          env,
+		limitCategory: limitCategory,
 	}
 }
 
@@ -53,7 +56,10 @@ func (h *Handler) initAPI(router *gin.Engine) {
 
 	api := router.Group("/api")
 	{
-		_ = api.Group("/v1")
+		v1 := api.Group("/v1")
+		{
+			h.initCategoryHandler(v1)
+		}
 	}
 
 }

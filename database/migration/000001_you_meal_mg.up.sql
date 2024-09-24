@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS "meals" (
     "weight" INTEGER NOT NULL,
     "calorie" INTEGER NOT NULL,
     "price" NUMERIC(10, 2) NOT NULL,
+    "image_path" VARCHAR(255) NOT NULL,
     "created_at" timestamp with time zone NOT NULL DEFAULT now()
 );
 

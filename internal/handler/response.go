@@ -12,8 +12,7 @@ type Response struct {
 
 func response(c *gin.Context, statusCode int, message string, data map[string]any) {
 	if statusCode != 200 && statusCode != 400 && statusCode != 404 {
-		switch message {
-		}
+		switch message {}
 	}
 
 	var response Response
