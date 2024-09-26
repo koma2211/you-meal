@@ -1,7 +1,7 @@
 migrate_source: "file://database/migration"
 
 database:
-  source: "postgresql://root:secret@67.205.166.186:5432/you_mealdb?sslmode=disable"
+  source: "postgresql://root:secret@67.205.166.186:5439/you_mealdb?sslmode=disable"
   max_conns: 15
   min_conns: 0
   max_conn_life_time: 10m
