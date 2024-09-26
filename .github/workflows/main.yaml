@@ -73,6 +73,6 @@ jobs:
               # Run a new container from a new image
               docker run -d \
               --restart always \
-              --publish 8000:8000 \
+              --publish 8080:8080 \
               --name $(echo $IMAGE_NAME) \
               $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
