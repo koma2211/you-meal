@@ -60,7 +60,7 @@ jobs:
           with:
             host: ${{ secrets.HOST }}
             username: ${{ secrets.USERNAME }}
-            key: ${{ secrets.SSHKEY }}
+            key: ${{ secrets.SSH_KEY }}
             envs: IMAGE_NAME,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
             script: |
               # Login to registry
