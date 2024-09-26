@@ -10,6 +10,7 @@ import (
 
 type Categorier interface {
 	GetBurgersByPage(ctx context.Context, limit, page int) ([]entities.Burger, error)
+	GetBurgersCount(ctx context.Context, limit int) (int, error)
 }
 
 type Repository struct {
@@ -21,6 +22,6 @@ func NewRepository(
 	logger *logger.Logger,
 ) *Repository {
 	return &Repository{
-		NewCategoryRepository(db, logger),
+		Categorier: NewCategoryRepository(db, logger),
 	}
 }

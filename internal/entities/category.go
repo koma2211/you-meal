@@ -7,5 +7,5 @@ type Burger struct {
 	Weight      int     `json:"weight,omitempty"`
 	Calorie     int     `json:"calorie,omitempty"`
 	Price       float64 `json:"price,omitempty"`
-	ImagePath string `json:"imagePath"`
+	ImagePath   string  `json:"imagePath"`
 }

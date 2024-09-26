@@ -28,3 +28,15 @@ func (cr *CategoryRepository) GetBurgersByPage(ctx context.Context, limit, page 
 	// offset := (page - 1) * limit
 	return nil, nil
 }
+
+func (cr *CategoryRepository) GetBurgersCount(ctx context.Context, limit int) (int, error) {
+	var totalPages int 
+
+	query := "SELECT CEIL(COUNT(*)::decimal / $1) AS total_pages FROM meals m INNER JOIN categories c ON m.category_id = c.id WHERE c.title = 'Бургеры'"
+	if err := cr.db.QueryRow(ctx, query, limit).Scan(&totalPages); err != nil {
+		cr.logger.ErrorLog.Err(err).Msg(err.Error())
+		return 0, err
+	}
+
+	return totalPages, nil  
+}

@@ -10,6 +10,7 @@ database:
   connect_timeout: 1m
 
 redis_source: "redis://:@localhost:6379/0"
+cache_category_ttl: 2h
 
 limit_category: 10
 

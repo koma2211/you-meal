@@ -1,7 +1,10 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/koma2211/you-meal/internal/entities"
 )
 
 type Response struct {
@@ -12,7 +15,10 @@ type Response struct {
 
 func response(c *gin.Context, statusCode int, message string, data map[string]any) {
 	if statusCode != 200 && statusCode != 400 && statusCode != 404 {
-		switch message {}
+		switch message {
+		case entities.ErrEmptyBurgers.Error():
+			statusCode = http.StatusBadRequest
+		}
 	}
 
 	var response Response

@@ -59,6 +59,7 @@ func (h *Handler) initAPI(router *gin.Engine) {
 		v1 := api.Group("/v1")
 		{
 			h.initCategoryHandler(v1)
+			h.initOrderHandler(v1)
 		}
 	}
 

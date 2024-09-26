@@ -9,8 +9,12 @@ import (
 
 func (h *Handler) initCategoryHandler(api *gin.RouterGroup) {
 	categories := api.Group("/categories")
-	{
-		categories.GET("/burgers/:page", h.getBurgersByPage())
+	{	
+		burgers := categories.Group("/burgers")
+		{
+			burgers.GET("/:page", h.getBurgersByPage())
+			burgers.GET("/count", h.getBurgersCount())
+		}
 	}
 }
 
@@ -31,5 +35,17 @@ func (h *Handler) getBurgersByPage() gin.HandlerFunc {
 
 
 		response(c, http.StatusOK, "success", map[string]any{"burgers": burgers})
+	}
+}
+
+func (h *Handler) getBurgersCount() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		burgersCount, err := h.services.GetBurgersCount(c.Request.Context(), h.limitCategory)
+		if err != nil {
+			response(c, http.StatusInternalServerError, err.Error(), nil)
+			return 
+		}
+
+		response(c, http.StatusOK, "success", map[string]any{"burgersCount": burgersCount})
 	}
 }
