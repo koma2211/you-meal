@@ -48,7 +48,7 @@ type Database struct {
 	HealthCheckPeriod time.Duration `yaml:"health_check_period" env-default:"1m"`
 	ConnectTimeout    time.Duration `yaml:"connect_timeout" env-default:"5m"`
 }
-
+ 
 func MustLoad() *Config {
 	err := godotenv.Load()
 	if err != nil {
