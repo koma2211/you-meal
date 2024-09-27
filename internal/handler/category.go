@@ -19,9 +19,9 @@ func (h *Handler) initCategoryHandler(api *gin.RouterGroup) {
 }
 
 func (h *Handler) getBurgersByPage() gin.HandlerFunc {
-	const pageParam = "page"
+	const pageQuery = "page"
 	return func(c *gin.Context) {
-		page, err := strconv.Atoi(c.Param(pageParam))
+		page, err := strconv.Atoi(c.Query(pageQuery))
 		if err != nil {
 			response(c, http.StatusBadRequest, err.Error(), nil)
 			return 
