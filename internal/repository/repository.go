@@ -9,8 +9,8 @@ import (
 )
 
 type Categorier interface {
-	GetBurgersByPage(ctx context.Context, limit, page int) ([]entities.Burger, error)
-	GetBurgersCount(ctx context.Context, limit int) (int, error)
+	GetBurgersByPage(ctx context.Context, limit, offset int) ([]entities.Burger, error)
+	GetNumberOfPagesByBurgers(ctx context.Context, limit int) (int, error)
 }
 
 type Repository struct {

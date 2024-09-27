@@ -37,7 +37,9 @@ func (cs *CategoryService) GetBurgersByPage(ctx context.Context, limit, page int
 		return nil, err
 	}
 
-	burgers, err := cs.categoryRepo.GetBurgersByPage(ctx, limit, page)
+	// Расчет offset
+	offset := (page - 1) * limit
+	burgers, err := cs.categoryRepo.GetBurgersByPage(ctx, limit, offset)
 	if err != nil {
 		cs.logger.ErrorLog.Err(err).Msg(err.Error())
 		return nil, err
@@ -52,9 +54,9 @@ func (cs *CategoryService) GetBurgersByPage(ctx context.Context, limit, page int
 	return burgers, nil
 }
 
-func (cs *CategoryService) GetBurgersCount(ctx context.Context, page int) (int, error) {
+func (cs *CategoryService) GetNumberOfPagesByBurgers(ctx context.Context, page int) (int, error) {
 	// check burgers count exists. If not exists then require to get data from database...
-	val, err := cs.categoryCacheRepo.GetBurgersCount(ctx)
+	val, err := cs.categoryCacheRepo.GetNumberOfPagesByBurgers(ctx)
 	if err == nil {
 		return val.(int), nil
 	}
@@ -63,14 +65,14 @@ func (cs *CategoryService) GetBurgersCount(ctx context.Context, page int) (int, 
 		return 0, err
 	}
 
-	burgersCount, err := cs.categoryRepo.GetBurgersCount(ctx, page)
+	burgersCount, err := cs.categoryRepo.GetNumberOfPagesByBurgers(ctx, page)
 	if err != nil {
 		cs.logger.ErrorLog.Err(err).Msg(err.Error())
 		return 0, err 
 	}
 
 	// added burgers count in redis cache if not exists...
-	err = cs.categoryCacheRepo.SetBurgersCount(ctx, burgersCount)
+	err = cs.categoryCacheRepo.SetNumberOfPagesByBurgers(ctx, burgersCount)
 	if err != nil {
 		cs.logger.ErrorLog.Err(err).Msg(err.Error())
 		return 0, err

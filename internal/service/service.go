@@ -11,7 +11,7 @@ import (
 
 type Categorier interface {
 	GetBurgersByPage(ctx context.Context, limit, page int) ([]entities.Burger, error)
-	GetBurgersCount(ctx context.Context, page int) (int, error)
+	GetNumberOfPagesByBurgers(ctx context.Context, page int) (int, error)
 }
 
 type Service struct {

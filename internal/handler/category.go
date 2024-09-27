@@ -13,7 +13,7 @@ func (h *Handler) initCategoryHandler(api *gin.RouterGroup) {
 		burgers := categories.Group("/burgers")
 		{
 			burgers.GET("/:page", h.getBurgersByPage())
-			burgers.GET("/count", h.getBurgersCount())
+			burgers.GET("/pages-count", h.getNumberOfPagesByBurgers())
 		}
 	}
 }
@@ -33,19 +33,18 @@ func (h *Handler) getBurgersByPage() gin.HandlerFunc {
 			return 
 		}
 
-
 		response(c, http.StatusOK, "success", map[string]any{"burgers": burgers})
 	}
 }
 
-func (h *Handler) getBurgersCount() gin.HandlerFunc {
+func (h *Handler) getNumberOfPagesByBurgers() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		burgersCount, err := h.services.GetBurgersCount(c.Request.Context(), h.limitCategory)
+		burgersPage, err := h.services.GetNumberOfPagesByBurgers(c.Request.Context(), h.limitCategory)
 		if err != nil {
 			response(c, http.StatusInternalServerError, err.Error(), nil)
 			return 
 		}
 
-		response(c, http.StatusOK, "success", map[string]any{"burgersCount": burgersCount})
+		response(c, http.StatusOK, "success", map[string]any{"burgersPage": burgersPage})
 	}
 }

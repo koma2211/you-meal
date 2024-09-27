@@ -50,7 +50,7 @@ func (cc *CacheCategory) GetBurgersByPage(ctx context.Context, page int) (any, e
 	return input, nil
 }
 
-func (cc *CacheCategory) GetBurgersCount(ctx context.Context) (any, error) {
+func (cc *CacheCategory) GetNumberOfPagesByBurgers(ctx context.Context) (any, error) {
 	result, err := cc.cache.Get(ctx, generateBurgerKeyCount()).Result()
 	if err != nil {
 		if err == redis.Nil {
@@ -79,7 +79,7 @@ func (cc *CacheCategory) SetBurgersByPage(ctx context.Context, key int, burgers 
 	return cc.cache.Set(ctx, generateBurgerPageKey(key), string(body), cc.categoryCacheTTL).Err()
 }
 
-func (cc *CacheCategory) SetBurgersCount(ctx context.Context, burgersCount int) error {
+func (cc *CacheCategory) SetNumberOfPagesByBurgers(ctx context.Context, burgersCount int) error {
 	return cc.cache.Set(ctx, generateBurgerKeyCount(), burgersCount, cc.categoryCacheTTL).Err()
 }
 

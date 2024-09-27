@@ -11,9 +11,9 @@ import (
 
 type Categorier interface {
 	GetBurgersByPage(ctx context.Context, page int) (any, error)
-	GetBurgersCount(ctx context.Context) (any, error)
+	GetNumberOfPagesByBurgers(ctx context.Context) (any, error)
 	SetBurgersByPage(ctx context.Context, key int, burgers []entities.Burger) error
-	SetBurgersCount(ctx context.Context, burgersCount int) error
+	SetNumberOfPagesByBurgers(ctx context.Context, burgersCount int) error
 }
 
 type CacheRepository struct {
