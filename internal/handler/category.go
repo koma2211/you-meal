@@ -12,7 +12,7 @@ func (h *Handler) initCategoryHandler(api *gin.RouterGroup) {
 	{	
 		burgers := categories.Group("/burgers")
 		{
-			burgers.GET("/:page", h.getBurgersByPage())
+			burgers.GET("/", h.getBurgersByPage())
 			burgers.GET("/pages-count", h.getNumberOfPagesByBurgers())
 		}
 	}
