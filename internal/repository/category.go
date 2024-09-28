@@ -67,3 +67,14 @@ func (cr *CategoryRepository) GetNumberOfPagesByBurgers(ctx context.Context, lim
 
 	return totalPages, nil
 }
+
+func (cr *CategoryRepository) CheckExistenceImage(ctx context.Context, burgerId int, imagePath string) (bool, error) {
+	var result bool 
+	query := "SELECT EXISTS (SELECT 1 FROM meals WHERE id = $1 AND image_path = $2)"
+	if err := cr.db.QueryRow(ctx, query, burgerId, imagePath).Scan(&result); err != nil {
+		cr.logger.ErrorLog.Err(err).Msg(err.Error())
+		return false, err
+	}
+
+	return result, nil
+}

@@ -9,6 +9,8 @@ services:
       - .env
     ports:
       - 8081:8080
+    volumes:
+      - /home/komron/images:/app/images
     depends_on:
       - postgres
       - redis
@@ -17,6 +19,8 @@ services:
     image: postgres:16.4-alpine3.20
     ports:
       - "5439:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data  # Adding the volume
     environment:
       - POSTGRES_USER=${DOCKER_POSTGRES_USER}
       - POSTGRES_PASSWORD=${DOCKER_POSTGRES_PASSWORD}
@@ -26,6 +30,12 @@ services:
     image: redis:7.4.0-alpine
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data  # Mount the volume to Redis data directory
     environment:
       - REDIS_PASSWORD=${DOCKER_REDIS_PASSWORD}
       - REDIS_PORT=${DOCKER_REDIS_PORT}
+    
+volumes:
+  pg_data:  
+  redis_data:

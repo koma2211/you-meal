@@ -1,7 +1,7 @@
 migrate_source: "file://database/migration"
 
 database:
-  source: "postgresql://root:secret@67.205.166.186:5439/you_mealdb?sslmode=disable"
+  source: "postgresql://root:secret@postgres:5432/you_mealdb?sslmode=disable"
   max_conns: 15
   min_conns: 0
   max_conn_life_time: 10m
@@ -9,7 +9,8 @@ database:
   health_check_period: 30s
   connect_timeout: 1m
 
-redis_source: "redis://:secret@67.205.166.186:6379/0"
+redis_source: "redis://:secret@redis:6379/0"
+cache_category_ttl: 2h
 
 limit_category: 10
 

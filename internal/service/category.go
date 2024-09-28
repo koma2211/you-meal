@@ -81,3 +81,16 @@ func (cs *CategoryService) GetNumberOfPagesByBurgers(ctx context.Context, page i
 	return burgersCount, nil 
 }
 
+func (cs *CategoryService) CheckExistenceImage(ctx context.Context, burgerId int, imagePath string) error {
+	exists, err := cs.categoryRepo.CheckExistenceImage(ctx, burgerId, imagePath)
+	if err != nil {
+		cs.logger.ErrorLog.Err(err).Msg(err.Error())
+		return err 
+	}
+
+	if !exists {
+		return entities.ErrImageNotExists
+	}
+
+	return nil
+}

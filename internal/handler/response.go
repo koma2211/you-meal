@@ -18,6 +18,8 @@ func response(c *gin.Context, statusCode int, message string, data map[string]an
 		switch message {
 		case entities.ErrEmptyBurgers.Error():
 			statusCode = http.StatusBadRequest
+		case entities.ErrImageNotExists.Error():
+			statusCode = http.StatusBadRequest
 		}
 	}
 
