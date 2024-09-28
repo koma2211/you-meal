@@ -21,6 +21,7 @@ http_server:
   max_header_bytes: 1048576
 
 logs:
+  env: "prod"
   info_path: "logs/info.log"
   debug_path: "logs/debug.log"
   error_path: "logs/error.log"

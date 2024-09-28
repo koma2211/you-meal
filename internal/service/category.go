@@ -82,6 +82,11 @@ func (cs *CategoryService) GetNumberOfPagesByBurgers(ctx context.Context, page i
 }
 
 func (cs *CategoryService) CheckExistenceImage(ctx context.Context, burgerId int, imagePath string) error {
+	err := cs.categoryCacheRepo.CheckImageExists(ctx, imagePath)
+	if err == nil {
+		return nil
+	}
+
 	exists, err := cs.categoryRepo.CheckExistenceImage(ctx, burgerId, imagePath)
 	if err != nil {
 		cs.logger.ErrorLog.Err(err).Msg(err.Error())
@@ -90,6 +95,11 @@ func (cs *CategoryService) CheckExistenceImage(ctx context.Context, burgerId int
 
 	if !exists {
 		return entities.ErrImageNotExists
+	}
+
+	if err := cs.categoryCacheRepo.SetImagePath(ctx, imagePath); err != nil {
+		cs.logger.ErrorLog.Err(err).Msg(err.Error())
+		return err
 	}
 
 	return nil

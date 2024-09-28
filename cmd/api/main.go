@@ -48,7 +48,7 @@ func main() {
 
 	repos := repository.NewRepository(db, logger)
 	serv := service.NewService(repos, cache, logger)
-	handlers := handler.NewHandler(serv, accessLogger, cfg.Env, cfg.LimitCategory)
+	handlers := handler.NewHandler(serv, accessLogger, cfg.Env, cfg.ImagePath, cfg.LimitCategory)
 
 	server := server.SetupServer(handlers, &cfg.HTTPServer, db, logger)
 

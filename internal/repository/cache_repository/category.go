@@ -83,10 +83,31 @@ func (cc *CacheCategory) SetNumberOfPagesByBurgers(ctx context.Context, burgersC
 	return cc.cache.Set(ctx, generateBurgerKeyCount(), burgersCount, cc.categoryCacheTTL).Err()
 }
 
+func (cc *CacheCategory) SetImagePath(ctx context.Context, imagePath string) error {
+	return cc.cache.Set(ctx, generateImagePath(imagePath), "", cc.categoryCacheTTL).Err()
+}
+
+func (cc *CacheCategory) CheckImageExists(ctx context.Context, imagePath string) error {
+	err := cc.cache.Get(ctx, imagePath).Err()
+	if err != nil {
+		if err == redis.Nil {
+			return entities.ErrImageNotExists
+		}
+		cc.logger.ErrorLog.Err(err).Msg(err.Error())
+		return err	
+	}
+	
+	return nil
+}
+
 func generateBurgerKeyCount() string {
 	return "burgers-count"
 }
 
 func generateBurgerPageKey(page int) string {
 	return fmt.Sprintf("burger:page:%d", page)
+}
+
+func generateImagePath(key string) string {
+	return fmt.Sprintf("image-path:%s", key)
 }

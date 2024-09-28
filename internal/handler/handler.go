@@ -13,6 +13,7 @@ type Handler struct {
 	services      *service.Service
 	accessLogger  zerolog.Logger
 	env           string
+	imagePath     string
 	limitCategory int
 }
 
@@ -20,12 +21,14 @@ func NewHandler(
 	services *service.Service,
 	accessLogger zerolog.Logger,
 	env string,
+	imagePath string,
 	limitCategory int,
 ) *Handler {
 	return &Handler{
-		services:     services,
-		accessLogger: accessLogger,
-		env:          env,
+		imagePath:     imagePath,
+		services:      services,
+		accessLogger:  accessLogger,
+		env:           env,
 		limitCategory: limitCategory,
 	}
 }

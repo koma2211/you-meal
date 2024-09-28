@@ -13,6 +13,7 @@ type Config struct {
 	MigrateSource    string        `yaml:"migrate_source"`
 	RedisSource      string        `yaml:"redis_source"`
 	LimitCategory    int           `yaml:"limit_category"`
+	ImagePath        string        `json:"image_path"`
 	CacheCategoryTTL time.Duration `yaml:"cache_category_ttl"`
 	Database         `yaml:"database"`
 	HTTPServer       `yaml:"http_server"`
@@ -48,13 +49,13 @@ type Database struct {
 	HealthCheckPeriod time.Duration `yaml:"health_check_period" env-default:"1m"`
 	ConnectTimeout    time.Duration `yaml:"connect_timeout" env-default:"5m"`
 }
- 
+
 func MustLoad() *Config {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error loading .env file: %s", err.Error())
 	}
-  
+
 	configPath := os.Getenv("CONFIG_PATH")
 
 	var cfg Config

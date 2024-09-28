@@ -14,8 +14,7 @@ func (h *Handler) initCategoryHandler(api *gin.RouterGroup) {
 		{
 			burgers.GET("/", h.getBurgersByPage())
 			burgers.GET("/pages-count", h.getNumberOfPagesByBurgers())
-			burgers.GET("/:id/", h.getImageBurgerById())
-			burgers.GET("/:id/exists", h.checkImageExists())
+			burgers.GET("/:burger_id", h.getImageBurgerById())
 		}
 	}
 }
@@ -57,22 +56,6 @@ func (h *Handler) getImageBurgerById() gin.HandlerFunc {
 		imageQueryParam = "image_path"
 	)
 	return func(c *gin.Context) {
-		_, err := strconv.Atoi(c.Param(burgerIdParam))
-		if err != nil {
-			response(c, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
-		_ = c.Query(imageQueryParam)
-	}
-}
-
-func (h *Handler) checkImageExists() gin.HandlerFunc {
-	const (
-		burgerIdParam   = "burger_id"
-		imageQueryParam = "image_path"
-	)
-	return func(c *gin.Context) {
 		burgerId, err := strconv.Atoi(c.Param(burgerIdParam))
 		if err != nil {
 			response(c, http.StatusBadRequest, err.Error(), nil)
@@ -86,7 +69,5 @@ func (h *Handler) checkImageExists() gin.HandlerFunc {
 			response(c, http.StatusInternalServerError, err.Error(), nil)
 			return
 		}
-
-		response(c, http.StatusOK, "success", nil)
 	}
 }

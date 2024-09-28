@@ -12,6 +12,8 @@ database:
 redis_source: "redis://:@localhost:6379/0"
 cache_category_ttl: 2h
 
+image_path: "/home/komron/images"
+
 limit_category: 10
 
 http_server:
@@ -22,6 +24,7 @@ http_server:
   max_header_bytes: 1048576
 
 logs:
+  env: "local"
   info_path: "logs/info.log"
   debug_path: "logs/debug.log"
   error_path: "logs/error.log"
