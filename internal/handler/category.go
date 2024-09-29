@@ -1,7 +1,13 @@
 package handler
 
 import (
+	"bytes"
+	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -62,12 +68,49 @@ func (h *Handler) getImageBurgerById() gin.HandlerFunc {
 			return
 		}
 
-		imagePath := c.Query(imageQueryParam)
+		imageFileName := c.Query(imageQueryParam)
 
-		err = h.services.CheckExistenceImage(c.Request.Context(), burgerId, imagePath)
+		err = h.services.CheckExistenceImage(c.Request.Context(), burgerId, imageFileName)
 		if err != nil {
 			response(c, http.StatusInternalServerError, err.Error(), nil)
 			return
 		}
+
+		filePath := h.imagePath + imageFileName
+
+		file, err := os.Open(filePath)
+		if err != nil {
+			response(c, http.StatusInternalServerError, fmt.Sprintf("Error opening file: %s", err.Error()), nil)
+			return
+		}
+
+		defer file.Close()
+
+		// Create a buffer to hold the multipart response
+		body := &bytes.Buffer{}
+		writer := multipart.NewWriter(body)
+
+		// Create a form file part
+		part, err := writer.CreateFormFile("file", filepath.Base(file.Name()))
+		if err != nil {
+			response(c, http.StatusInternalServerError, fmt.Sprintf("Error creating form file: %s", err.Error()), nil)
+			return
+		}
+
+		// Copy the file contents to the form file part
+		if _, err := io.Copy(part, file); err != nil {
+			response(c, http.StatusInternalServerError, fmt.Sprintf("Error copying file: %s", err.Error()), nil)
+			return
+		}
+
+		// Close the writer to finalize the multipart data
+		writer.Close()
+
+		// Set the appropriate headers
+		c.Header("Content-Type", writer.FormDataContentType())
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", imageFileName))
+
+		// Send the multipart response
+		c.Data(http.StatusOK, writer.FormDataContentType(), body.Bytes())
 	}
 }

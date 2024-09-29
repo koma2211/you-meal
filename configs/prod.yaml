@@ -13,6 +13,8 @@ redis_source: "redis://:secret@67.205.166.186:6379/0"
 
 limit_category: 10
 
+image_path: "/images/"
+
 http_server:
   address: "0.0.0.0:8080"
   read_timeout: 15s

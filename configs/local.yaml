@@ -12,7 +12,7 @@ database:
 redis_source: "redis://:@localhost:6379/0"
 cache_category_ttl: 2h
 
-image_path: "/home/komron/images"
+image_path: "/home/komron/projects/you-meal/images"
 
 limit_category: 10
 

@@ -12,7 +12,7 @@ import (
 type Categorier interface {
 	GetBurgersByPage(ctx context.Context, limit, page int) ([]entities.Burger, error)
 	GetNumberOfPagesByBurgers(ctx context.Context, page int) (int, error)
-	CheckExistenceImage(ctx context.Context, burgerId int, imagePath string) error
+	CheckExistenceImage(ctx context.Context, burgerId int, fileName string) error
 }
 
 type Service struct {

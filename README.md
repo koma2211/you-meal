@@ -17,5 +17,9 @@ docker run -d \
   redis-server --requirepass secret
 
 
-scp -r /home/komron/projects/you-meal/images/ root@67.205.166.186:/root
+this command need to share file to host file
+scp -r /home/komron/projects/you-meal/images/ root@67.205.166.186:/root  
 
+
+this command help us to clean redis server
+docker exec -it redis redis-cli -a secret FLUSHALL

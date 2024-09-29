@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS "meals" (
 CREATE TABLE IF NOT EXISTS "ingredients" (
     "id" INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     "meal_id" INTEGER REFERENCES meals(id) NOT NULL,
-    "title" VARCHAR(255) NOT NULL
+    "compound" text[] NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "orders" (
