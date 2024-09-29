@@ -34,9 +34,9 @@ func NewHandler(
 }
 
 func (h *Handler) Init() *gin.Engine {
-	// if h.env != "local" {
-	// 	gin.SetMode(gin.ReleaseMode)
-	// }
+	if h.env != "local" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	router := gin.New()
 

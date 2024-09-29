@@ -9,9 +9,13 @@ docker run -d \
    postgres:16.4-alpine3.20
 
 
-<!-- docker run -d \
+docker run -d \
   --name redis \
   -p 6379:6379 \
   -e REDIS_PASSWORD=secret \
   redis:7.4.0-alpine \
-  redis-server --requirepass secret -->
+  redis-server --requirepass secret
+
+
+scp -r /home/komron/projects/you-meal/images/ root@67.205.166.186:/root
+
