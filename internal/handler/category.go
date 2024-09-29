@@ -1,13 +1,8 @@
 package handler
 
 import (
-	"bytes"
-	"fmt"
-	"io"
-	"mime/multipart"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -78,39 +73,15 @@ func (h *Handler) getImageBurgerById() gin.HandlerFunc {
 
 		filePath := h.imagePath + imageFileName
 
-		file, err := os.Open(filePath)
+		data, err := os.ReadFile(filePath)
 		if err != nil {
-			response(c, http.StatusInternalServerError, fmt.Sprintf("Error opening file: %s", err.Error()), nil)
+			response(c, http.StatusInternalServerError, "File not found", nil)
 			return
 		}
 
-		defer file.Close()
-
-		// Create a buffer to hold the multipart response
-		body := &bytes.Buffer{}
-		writer := multipart.NewWriter(body)
-
-		// Create a form file part
-		part, err := writer.CreateFormFile("file", filepath.Base(file.Name()))
-		if err != nil {
-			response(c, http.StatusInternalServerError, fmt.Sprintf("Error creating form file: %s", err.Error()), nil)
-			return
-		}
-
-		// Copy the file contents to the form file part
-		if _, err := io.Copy(part, file); err != nil {
-			response(c, http.StatusInternalServerError, fmt.Sprintf("Error copying file: %s", err.Error()), nil)
-			return
-		}
-
-		// Close the writer to finalize the multipart data
-		writer.Close()
-
-		// Set the appropriate headers
-		c.Header("Content-Type", writer.FormDataContentType())
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", file.Name()))
-
-		// Send the multipart response
-		c.Data(http.StatusOK, writer.FormDataContentType(), body.Bytes())
+		// Set the content type and send the data
+		c.Header("Content-Type", "application/octet-stream") // or set a specific type like "application/pdf"
+		c.Header("Content-Disposition", "attachment; filename="+imageFileName)
+		c.Data(http.StatusOK, "application/octet-stream", data)
 	}
 }
