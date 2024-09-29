@@ -22,11 +22,11 @@ http_server:
 
 logs:
   env: "prod"
-  info_path: "logs/info.log"
-  debug_path: "logs/debug.log"
-  error_path: "logs/error.log"
-  warn_path: "logs/warn.log"
-  access_path: "logs/access.log"
+  info_path: "/logs/info.log"
+  debug_path: "/logs/debug.log"
+  error_path: "/logs/error.log"
+  warn_path: "/logs/warn.log"
+  access_path: "/logs/access.log"
   max_size: 100
   max_age : 30
   max_backups: 5 
