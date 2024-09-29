@@ -66,9 +66,9 @@ func (h *Handler) getImageBurgerById() gin.HandlerFunc {
 			return
 		}
 
-		// Set the content type and send the data
-		c.Header("Content-Type", "application/octet-stream") // or set a specific type like "application/pdf"
+		// Set the Content-Type header for JPEG
+		c.Header("Content-Type", "image/jpeg") // Set content type for JPEG
 		c.Header("Content-Disposition", "attachment; filename="+imageFileName)
-		c.Data(http.StatusOK, "application/octet-stream", data)
+		c.Data(http.StatusOK, "image/jpeg", data)
 	}
 }
