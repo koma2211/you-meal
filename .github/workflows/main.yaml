@@ -13,8 +13,7 @@ env:
     IMAGE_NAME: "you-meal-app"
     CONTAINER_NAME: "you-meal"
     LOGS_PATH: "/root/logs"
-    ENV_FILE_PATH: ""
-    IMAGE_PATH: "/root/logs"
+    IMAGE_PATH: "/root/images"
 
 jobs:
     test:
