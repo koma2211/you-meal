@@ -53,23 +53,10 @@ func (h *Handler) getNumberOfPagesByBurgers() gin.HandlerFunc {
 
 func (h *Handler) getImageBurgerById() gin.HandlerFunc {
 	const (
-		burgerIdParam   = "burger_id"
 		imageQueryParam = "image_path"
 	)
 	return func(c *gin.Context) {
-		burgerId, err := strconv.Atoi(c.Param(burgerIdParam))
-		if err != nil {
-			response(c, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
 		imageFileName := c.Query(imageQueryParam)
-
-		err = h.services.CheckExistenceImage(c.Request.Context(), burgerId, imageFileName)
-		if err != nil {
-			response(c, http.StatusInternalServerError, err.Error(), nil)
-			return
-		}
 
 		filePath := h.imagePath + imageFileName
 

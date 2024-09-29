@@ -14,8 +14,6 @@ type Categorier interface {
 	GetNumberOfPagesByBurgers(ctx context.Context) (any, error)
 	SetBurgersByPage(ctx context.Context, key int, burgers []entities.Burger) error
 	SetNumberOfPagesByBurgers(ctx context.Context, burgersCount int) error
-	SetImagePath(ctx context.Context, imagePath string) error
-	CheckImageExists(ctx context.Context, imagePath string) error
 }
 
 type CacheRepository struct {
