@@ -25,7 +25,7 @@ func NewCategoryRepository(
 }
 
 func (cr *CategoryRepository) GetBurgersByPage(ctx context.Context, limit, offset int) ([]entities.Burger, error) {
-	query := "SELECT m.id, m.title, m.description, m.weight, m.calorie, m.price, m.image_path FROM meals m INNER JOIN categories c ON m.category_id = c.id WHERE c.title = 'Бургеры' ORDER BY m.id LIMIT $1 OFFSET $2"
+	query := "SELECT m.id, m.title, m.description, m.weight, m.calorie, m.price, m.image_path FROM meals m INNER JOIN categories c ON m.category_id = c.id WHERE c.title = 'Бургеры' ORDER BY m.id LIMIT $1 OFFSET $2;"
 
 	rows, err := cr.db.Query(ctx, query, limit, offset)
 	if err != nil {
@@ -59,7 +59,7 @@ func (cr *CategoryRepository) GetBurgersByPage(ctx context.Context, limit, offse
 func (cr *CategoryRepository) GetNumberOfPagesByBurgers(ctx context.Context, limit int) (int, error) {
 	var totalPages int
 
-	query := "SELECT CEIL(COUNT(*)::decimal / $1) AS total_pages FROM meals m INNER JOIN categories c ON m.category_id = c.id WHERE c.title = 'Бургеры'"
+	query := "SELECT CEIL(COUNT(*)::decimal / $1) AS total_pages FROM meals m INNER JOIN categories c ON m.category_id = c.id WHERE c.title = 'Бургеры';"
 	if err := cr.db.QueryRow(ctx, query, limit).Scan(&totalPages); err != nil {
 		cr.logger.ErrorLog.Err(err).Msg(err.Error())
 		return 0, err
@@ -70,7 +70,7 @@ func (cr *CategoryRepository) GetNumberOfPagesByBurgers(ctx context.Context, lim
 
 func (cr *CategoryRepository) CheckExistenceImage(ctx context.Context, burgerId int, imagePath string) (bool, error) {
 	var result bool 
-	query := "SELECT EXISTS (SELECT 1 FROM meals WHERE id = $1 AND image_path = $2)"
+	query := "SELECT EXISTS (SELECT 1 FROM meals WHERE id = $1 AND image_path = $2);"
 	if err := cr.db.QueryRow(ctx, query, burgerId, imagePath).Scan(&result); err != nil {
 		cr.logger.ErrorLog.Err(err).Msg(err.Error())
 		return false, err
