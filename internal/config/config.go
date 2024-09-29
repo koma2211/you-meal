@@ -13,7 +13,7 @@ type Config struct {
 	MigrateSource    string        `yaml:"migrate_source"`
 	RedisSource      string        `yaml:"redis_source"`
 	LimitCategory    int           `yaml:"limit_category"`
-	ImagePath        string        `json:"image_path"`
+	ImagePath        string        `yaml:"image_path"`
 	CacheCategoryTTL time.Duration `yaml:"cache_category_ttl"`
 	Database         `yaml:"database"`
 	HTTPServer       `yaml:"http_server"`

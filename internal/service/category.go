@@ -86,6 +86,10 @@ func (cs *CategoryService) CheckExistenceImage(ctx context.Context, burgerId int
 	if err == nil {
 		return nil
 	}
+	
+	if err != entities.ErrImageNotExists {
+		return err
+	}
 
 	exists, err := cs.categoryRepo.CheckExistenceImage(ctx, burgerId, fileName)
 	if err != nil {
