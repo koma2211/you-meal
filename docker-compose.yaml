@@ -10,7 +10,7 @@ services:
     ports:
       - 8081:8080
     volumes:
-      - /home/komron/images:/app/images
+      - /home/komron/images:/images
     depends_on:
       - postgres
       - redis

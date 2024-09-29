@@ -12,6 +12,9 @@ env:
     REGISTRY: "registry.digitalocean.com/you-meal"
     IMAGE_NAME: "you-meal-app"
     CONTAINER_NAME: "you-meal"
+    LOGS_PATH: "/root/logs"
+    ENV_FILE_PATH: ""
+    IMAGE_PATH: "/root/logs"
 
 jobs:
     test:
@@ -75,4 +78,6 @@ jobs:
               --restart always \
               --publish 8080:8080 \
               --name $(echo $IMAGE_NAME) \
+              -v $(echo $LOGS_PATH):/logs \
+              -v $(echo $IMAGE_PATH):/images \
               $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
