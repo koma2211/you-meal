@@ -108,7 +108,7 @@ func (h *Handler) getImageBurgerById() gin.HandlerFunc {
 
 		// Set the appropriate headers
 		c.Header("Content-Type", writer.FormDataContentType())
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", imageFileName))
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", file.Name()))
 
 		// Send the multipart response
 		c.Data(http.StatusOK, writer.FormDataContentType(), body.Bytes())
