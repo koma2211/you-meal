@@ -23,3 +23,14 @@ scp -r /home/komron/projects/you-meal/images/ root@67.205.166.186:/root
 
 this command help us to clean redis server
 docker exec -it redis redis-cli -a secret FLUSHALL
+
+
+docker run -d \
+  --name your-nginx-container \
+  -v /root/logs:/logs \
+  -p 80:80 \
+  -p 443:443 \
+  nginx
+
+
+добавить cors, nginx

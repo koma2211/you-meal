@@ -10,9 +10,11 @@ database:
   connect_timeout: 1m
 
 redis_source: "redis://:secret@redis:6379/0"
-cache_category_ttl: 2h
+cache_category_ttl: 1m
 
-limit_category: 10
+limit_category: 5
+
+image_path: "/images"
 
 http_server:
   address: "0.0.0.0:8080"

@@ -45,6 +45,18 @@ func (cs *CategoryService) GetBurgersByPage(ctx context.Context, limit, page int
 		return nil, err
 	}
 
+	burgersLen := len(burgers)
+	
+	for i := 0; i < burgersLen; i++ {
+		ingredients, err := cs.categoryRepo.GetBurgerIngredientsById(ctx, burgers[i].ID)
+		if err != nil {
+			cs.logger.ErrorLog.Err(err).Msg(err.Error())
+			return nil, err
+		}
+
+		burgers[i].Ingredient = ingredients
+	}
+
 	err = cs.categoryCacheRepo.SetBurgersByPage(ctx, page, burgers)
 	if err != nil {
 		cs.logger.ErrorLog.Err(err).Msg(err.Error())

@@ -10,11 +10,11 @@ database:
   connect_timeout: 1m
 
 redis_source: "redis://:@localhost:6379/0"
-cache_category_ttl: 2h
+cache_category_ttl: 1m
 
-image_path: "/home/komron/projects/you-meal/images"
+image_path: "/images"
 
-limit_category: 10
+limit_category: 5
 
 http_server:
   address: "localhost:8080"

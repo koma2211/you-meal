@@ -10,9 +10,11 @@ import (
 
 type Categorier interface {
 	GetBurgersByPage(ctx context.Context, limit, offset int) ([]entities.Burger, error)
+	GetBurgerIngredientsById(ctx context.Context, burgerId int) ([]entities.Ingredient, error)
 	GetNumberOfPagesByBurgers(ctx context.Context, limit int) (int, error)
 	CheckExistenceImage(ctx context.Context, burgerId int, fileName string) (bool, error)
 }
+
 
 type Repository struct {
 	Categorier

@@ -10,8 +10,8 @@ database:
   connect_timeout: 1m
 
 redis_source: "redis://:secret@67.205.166.186:6379/0"
-
-limit_category: 10
+cache_category_ttl: 1m
+limit_category: 5
 
 image_path: "/images/"
 

@@ -56,6 +56,32 @@ func (cr *CategoryRepository) GetBurgersByPage(ctx context.Context, limit, offse
 	return burgers, nil
 }
 
+func (cr *CategoryRepository) GetBurgerIngredientsById(ctx context.Context, burgerId int) ([]entities.Ingredient, error) {
+	var ingredients []entities.Ingredient
+	query := "SELECT id, title FROM ingredients WHERE meal_id = $1 ORDER BY id;"
+
+
+	rows, err := cr.db.Query(ctx, query, burgerId)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var ingredient entities.Ingredient
+		if err := rows.Scan(&ingredient.Id, &ingredient.Title); err != nil {
+			cr.logger.ErrorLog.Err(err).Msg(err.Error())
+			return nil, err
+		}
+
+		ingredients = append(ingredients, ingredient)
+	}
+
+	return ingredients, nil
+}
+
+
 func (cr *CategoryRepository) GetNumberOfPagesByBurgers(ctx context.Context, limit int) (int, error) {
 	var totalPages int
 
