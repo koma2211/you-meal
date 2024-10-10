@@ -2,7 +2,9 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/koma2211/you-meal/internal/service"
 
@@ -38,9 +40,22 @@ func (h *Handler) Init() *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	// Cors default...
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"POST", "GET"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
+	config.ExposeHeaders = []string{"Content-Length"}
+	config.AllowCredentials = true
+	config.MaxAge = 1 * time.Hour
+
 	router := gin.New()
 
-	router.Use(h.requestLoggerHTTP(), gin.Recovery())
+	router.Use(
+		cors.New(config), 
+		h.requestLoggerHTTP(),
+		gin.Recovery(),
+	)
 
 	// Init router
 	router.GET("/ping", func(c *gin.Context) {
