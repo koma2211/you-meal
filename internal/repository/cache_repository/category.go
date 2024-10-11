@@ -30,7 +30,7 @@ func NewCacheCategory(
 	}
 }
 
-func (cc *CacheCategory) GetBurgersByPage(ctx context.Context, page int) (any, error) {
+func (cc *CacheCategory) GetBurgersCategoryByPage(ctx context.Context, page int) (any, error) {
 	result, err := cc.cache.Get(ctx, generateBurgerPageKey(page)).Result()
 	if err != nil {
 		if err == redis.Nil {
@@ -40,7 +40,7 @@ func (cc *CacheCategory) GetBurgersByPage(ctx context.Context, page int) (any, e
 		return nil, err
 	}
 
-	var input []entities.Burger
+	var input entities.Category
 	err = json.Unmarshal([]byte(result), &input)
 	if err != nil {
 		cc.logger.ErrorLog.Err(err).Msg(err.Error())
@@ -69,8 +69,8 @@ func (cc *CacheCategory) GetNumberOfPagesByBurgers(ctx context.Context) (any, er
 	return burgersCount, nil
 }
 
-func (cc *CacheCategory) SetBurgersByPage(ctx context.Context, key int, burgers []entities.Burger) error {
-	body, err := json.Marshal(burgers)
+func (cc *CacheCategory) SetBurgersCategoryByPage(ctx context.Context, key int, burgersCategory entities.Category) error {
+	body, err := json.Marshal(burgersCategory)
 	if err != nil {
 		cc.logger.ErrorLog.Err(err).Msg(err.Error())
 		return err
@@ -88,6 +88,6 @@ func generateBurgerKeyCount() string {
 }
 
 func generateBurgerPageKey(page int) string {
-	return fmt.Sprintf("burger:page:%d", page)
+	return fmt.Sprintf("burgers:page:%d", page)
 }
 

@@ -29,13 +29,13 @@ func (h *Handler) getBurgersByPage() gin.HandlerFunc {
 			return
 		}
 
-		burgers, err := h.services.GetBurgersByPage(c.Request.Context(), h.limitCategory, page)
+		category, err := h.services.GetBurgersCategoryByPage(c.Request.Context(), h.limitCategory, page)
 		if err != nil {
 			response(c, http.StatusInternalServerError, err.Error(), nil)
 			return
 		}
 
-		response(c, http.StatusOK, "success", map[string]any{"burgers": burgers})
+		response(c, http.StatusOK, "success", map[string]any{"category": category})
 	}
 }
 

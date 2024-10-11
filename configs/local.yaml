@@ -14,7 +14,7 @@ cache_category_ttl: 1m
 
 image_path: "/images"
 
-limit_category: 5
+limit_category: 3
 
 http_server:
   address: "localhost:8080"

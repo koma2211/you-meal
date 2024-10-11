@@ -12,7 +12,7 @@ database:
 redis_source: "redis://:secret@redis:6379/0"
 cache_category_ttl: 1m
 
-limit_category: 5
+limit_category: 3
 
 image_path: "/images"
 

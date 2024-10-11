@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -24,42 +25,49 @@ func NewCategoryRepository(
 	}
 }
 
-func (cr *CategoryRepository) GetBurgersByPage(ctx context.Context, limit, offset int) ([]entities.Burger, error) {
-	query := "SELECT m.id, m.title, m.description, m.weight, m.calorie, m.price, m.image_path FROM meals m INNER JOIN categories c ON m.category_id = c.id WHERE c.title = 'Бургеры' ORDER BY m.id LIMIT $1 OFFSET $2;"
+func (cr *CategoryRepository) GetBurgersCategoryByPage(ctx context.Context, limit, offset int) (entities.Category, error) {
+	var category entities.Category
 
-	rows, err := cr.db.Query(ctx, query, limit, offset)
+	query := fmt.Sprintf("SELECT id, title FROM %s WHERE title = 'Бургеры'", categoriesTable)
+
+	err := cr.db.QueryRow(ctx, query).Scan(&category.ID, &category.Title)
+	if err != nil {
+		cr.logger.ErrorLog.Err(err).Msg(err.Error())
+		return entities.Category{}, err
+	}
+
+	query = fmt.Sprintf("SELECT id, title, description, weight, calorie, price, image_path FROM %s WHERE category_id = $1 ORDER BY id LIMIT $2 OFFSET $3;", mealsTable)
+	rows, err := cr.db.Query(ctx, query, category.ID, limit, offset)
 	if err != nil {
 		if pgx.ErrNoRows == err {
-			return nil, entities.ErrEmptyBurgers
+			return entities.Category{}, entities.ErrEmptyBurgers
 		}
 		cr.logger.ErrorLog.Err(err).Msg(err.Error())
-		return nil, err
+		return entities.Category{}, err
 	}
 	defer rows.Close()
 
-	var burgers []entities.Burger
 	for rows.Next() {
-		var burger entities.Burger
-		if err := rows.Scan(&burger.ID, &burger.Title, &burger.Description, &burger.Weight, &burger.Calorie, &burger.Price, &burger.ImagePath); err != nil {
+		var burgerMeal entities.Meal
+		if err := rows.Scan(&burgerMeal.ID, &burgerMeal.Title, &burgerMeal.Description, &burgerMeal.Weight, &burgerMeal.Calorie, &burgerMeal.Price, &burgerMeal.ImagePath); err != nil {
 			cr.logger.ErrorLog.Err(err).Msg(err.Error())
-			return nil, err 
+			return entities.Category{}, err
 		}
 
-		burgers = append(burgers, burger)
+		category.Meals = append(category.Meals, burgerMeal)
 	}
 
 	if err := rows.Err(); err != nil {
 		cr.logger.ErrorLog.Err(err).Msg(err.Error())
-		return nil, err
+		return entities.Category{}, err
 	}
 
-	return burgers, nil
+	return category, nil
 }
 
 func (cr *CategoryRepository) GetBurgerIngredientsById(ctx context.Context, burgerId int) ([]entities.Ingredient, error) {
 	var ingredients []entities.Ingredient
 	query := "SELECT id, title FROM ingredients WHERE meal_id = $1 ORDER BY id;"
-
 
 	rows, err := cr.db.Query(ctx, query, burgerId)
 	if err != nil {
@@ -81,7 +89,6 @@ func (cr *CategoryRepository) GetBurgerIngredientsById(ctx context.Context, burg
 	return ingredients, nil
 }
 
-
 func (cr *CategoryRepository) GetNumberOfPagesByBurgers(ctx context.Context, limit int) (int, error) {
 	var totalPages int
 
@@ -95,7 +102,7 @@ func (cr *CategoryRepository) GetNumberOfPagesByBurgers(ctx context.Context, lim
 }
 
 func (cr *CategoryRepository) CheckExistenceImage(ctx context.Context, burgerId int, fileName string) (bool, error) {
-	var result bool 
+	var result bool
 	query := "SELECT EXISTS (SELECT 1 FROM meals WHERE id = $1 AND image_path = $2);"
 	if err := cr.db.QueryRow(ctx, query, burgerId, fileName).Scan(&result); err != nil {
 		cr.logger.ErrorLog.Err(err).Msg(err.Error())

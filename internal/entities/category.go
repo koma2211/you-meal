@@ -1,6 +1,12 @@
 package entities
 
-type Burger struct {
+type Category struct {
+	ID    int    `json:"id,omitempty"`
+	Title string `json:"title,omitempty"`
+	Meals []Meal `json:"meals,omitempty"`
+}
+
+type Meal struct {
 	ID          int          `json:"id,omitempty"`
 	Title       string       `json:"title,omitempty"`
 	Description string       `json:"description,omitempty"`
@@ -8,7 +14,7 @@ type Burger struct {
 	Calorie     int          `json:"calorie,omitempty"`
 	Price       float64      `json:"price,omitempty"`
 	ImagePath   string       `json:"imagePath,omitempty"`
-	Ingredient  []Ingredient `json:"ingredient,omitempty"`
+	Ingredients []Ingredient `json:"ingredients,omitempty"`
 }
 
 type Ingredient struct {

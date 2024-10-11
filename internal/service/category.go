@@ -27,43 +27,43 @@ func NewCategoryService(
 	}
 }
 
-func (cs *CategoryService) GetBurgersByPage(ctx context.Context, limit, page int) ([]entities.Burger, error) {
-	values, err := cs.categoryCacheRepo.GetBurgersByPage(ctx, page)
+func (cs *CategoryService) GetBurgersCategoryByPage(ctx context.Context, limit, page int) (entities.Category, error) {
+	values, err := cs.categoryCacheRepo.GetBurgersCategoryByPage(ctx, page)
 	if err == nil {
-		return values.([]entities.Burger), nil 
+		return values.(entities.Category), nil 
 	}
 
 	if err != entities.ErrEmptyBurgers {
-		return nil, err
+		return entities.Category{}, err
 	}
 
 	// Расчет offset
 	offset := (page - 1) * limit
-	burgers, err := cs.categoryRepo.GetBurgersByPage(ctx, limit, offset)
+	burgersCategory, err := cs.categoryRepo.GetBurgersCategoryByPage(ctx, limit, offset)
 	if err != nil {
 		cs.logger.ErrorLog.Err(err).Msg(err.Error())
-		return nil, err
+		return entities.Category{}, err
 	}
 
-	burgersLen := len(burgers)
+	burgersLen := len(burgersCategory.Meals)
 	
 	for i := 0; i < burgersLen; i++ {
-		ingredients, err := cs.categoryRepo.GetBurgerIngredientsById(ctx, burgers[i].ID)
+		ingredients, err := cs.categoryRepo.GetBurgerIngredientsById(ctx, burgersCategory.Meals[i].ID)
 		if err != nil {
 			cs.logger.ErrorLog.Err(err).Msg(err.Error())
-			return nil, err
+			return entities.Category{}, err
 		}
 
-		burgers[i].Ingredient = ingredients
+		burgersCategory.Meals[i].Ingredients = ingredients
 	}
 
-	err = cs.categoryCacheRepo.SetBurgersByPage(ctx, page, burgers)
+	err = cs.categoryCacheRepo.SetBurgersCategoryByPage(ctx, page, burgersCategory)
 	if err != nil {
 		cs.logger.ErrorLog.Err(err).Msg(err.Error())
-		return nil, err
+		return entities.Category{}, err
 	}
 
-	return burgers, nil
+	return burgersCategory, nil
 }
 
 func (cs *CategoryService) GetNumberOfPagesByBurgers(ctx context.Context, page int) (int, error) {

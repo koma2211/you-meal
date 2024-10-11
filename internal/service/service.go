@@ -10,7 +10,7 @@ import (
 )
 
 type Categorier interface {
-	GetBurgersByPage(ctx context.Context, limit, page int) ([]entities.Burger, error)
+	GetBurgersCategoryByPage(ctx context.Context, limit, page int) (entities.Category, error)
 	GetNumberOfPagesByBurgers(ctx context.Context, page int) (int, error)
 }
 
