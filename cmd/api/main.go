@@ -13,6 +13,7 @@ import (
 	"github.com/koma2211/you-meal/pkg/database/migration"
 	"github.com/koma2211/you-meal/pkg/database/postgres"
 	"github.com/koma2211/you-meal/pkg/logger"
+	"github.com/koma2211/you-meal/pkg/validate"
 )
 
 func main() {
@@ -46,8 +47,10 @@ func main() {
 
 	cache := cacherepository.NewCacheRepository(rdb, logger, cfg.CacheCategoryTTL)
 
+	valid := validate.NewValidation()
+
 	repos := repository.NewRepository(db, logger)
-	serv := service.NewService(repos, cache, logger)
+	serv := service.NewService(repos, cache, logger, valid)
 	handlers := handler.NewHandler(serv, accessLogger, cfg.Env, cfg.ImagePath, cfg.LimitCategory)
 
 	server := server.SetupServer(handlers, &cfg.HTTPServer, db, logger)

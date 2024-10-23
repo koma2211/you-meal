@@ -1,15 +1,7 @@
-CREATE TABLE IF NOT EXISTS "phones" (
-    "id" INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    "number" VARCHAR(12) UNIQUE NOT NULL,
-    "created_at" timestamp with time zone NOT NULL DEFAULT now()
-);
-
 CREATE TABLE IF NOT EXISTS "clients" (
     "id" INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    "phone_id" INTEGER REFERENCES phones(id) NOT NULL,
+    "phone_number" VARCHAR(12) UNIQUE NOT NULL, 
     "name" VARCHAR(255) NOT NULL,
-    "address" TEXT NOT NULL,
-    "floor" INTEGER NOT NULL,
     "created_at" timestamp with time zone NOT NULL DEFAULT now()
 );
 
@@ -40,6 +32,7 @@ CREATE TABLE IF NOT EXISTS "orders" (
     "id" INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     "client_id" INTEGER REFERENCES clients(id) NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'pending', -- pending, waiting, completed, canceled
+    "total_price" NUMERIC(10, 2) NOT NULL,
     "receiving_at" timestamp with time zone NOT NULL
 );
 
@@ -47,8 +40,7 @@ CREATE TABLE IF NOT EXISTS "ordered_meals" (
     "id" INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     "order_id" INTEGER REFERENCES orders(id) NOT NULL, 
     "meal_id" INTEGER REFERENCES meals(id) NOT NULL,
-    "count" INTEGER NOT NULL,
-    "common_price" NUMERIC(10, 2) NOT NULL,
+    "quantity" INTEGER NOT NULL,
     "created_at" timestamp with time zone NOT NULL DEFAULT now() 
 );
 
