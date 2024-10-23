@@ -88,8 +88,8 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 		return err
 	}
 
-	if client.IsDelivery {
-		err = os.orderRepo.AddDelivery(ctx, tx, orderId, client.Address, client.Floor)
+	if *client.IsDelivery {
+		err = os.orderRepo.AddDelivery(ctx, tx, orderId, *client.Address, *client.Floor)
 		if err != nil {
 			if err := os.trRepo.Rollback(ctx, tx); err != nil {
 				os.logger.ErrorLog.Err(err).Msg(err.Error())

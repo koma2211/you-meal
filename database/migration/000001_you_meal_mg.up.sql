@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS "orders" (
     "client_id" INTEGER REFERENCES clients(id) NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'pending', -- pending, waiting, completed, canceled
     "total_price" NUMERIC(10, 2) NOT NULL,
-    "receiving_at" timestamp with time zone NOT NULL
+    "receiving_at" timestamp with time zone NOT NULL,
+    "created_at" timestamp with time zone NOT NULL DEFAULT now() 
 );
 
 CREATE TABLE IF NOT EXISTS "ordered_meals" (

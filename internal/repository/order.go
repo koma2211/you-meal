@@ -26,7 +26,7 @@ func NewOrderRepository(
 }
 
 func (or *OrderRepository) AddOrderedMeals(ctx context.Context, tx pgx.Tx, orderId int, orders []entities.OrderedMeals) error {
-	query := fmt.Sprintf("INSERT INTO %s (order_id, meal_id, quantity) VALUES ($1, $2, $3)", orderedMealsTable)
+	query := fmt.Sprintf("INSERT INTO %s (order_id, meal_id, quantity) VALUES ($1, $2, $3);", orderedMealsTable)
 
 	for _, order := range orders {
 		if _, err := tx.Exec(ctx, query, orderId, order.ID, order.Quantity); err != nil {
@@ -40,7 +40,7 @@ func (or *OrderRepository) AddOrderedMeals(ctx context.Context, tx pgx.Tx, order
 
 func (or *OrderRepository) AddClientInfo(ctx context.Context, tx pgx.Tx, phoneNumber string, name string) (int, error) {
 	var id int
-	query := fmt.Sprintf("INSERT INTO %s (phone_number, name) VALUES ($1, $2) RETURNING id", clientsTable)
+	query := fmt.Sprintf("INSERT INTO %s (phone_number, name) VALUES ($1, $2) RETURNING id;", clientsTable)
 	if err := tx.QueryRow(ctx, query, phoneNumber, name).Scan(&id); err != nil {
 		or.logger.ErrorLog.Err(err).Msg(err.Error())
 		return 0, err
@@ -51,7 +51,7 @@ func (or *OrderRepository) AddClientInfo(ctx context.Context, tx pgx.Tx, phoneNu
 
 func (or *OrderRepository) PlaceAnOrder(ctx context.Context, tx pgx.Tx, clientId int, totalPrice float64) (int, error) {
 	var id int
-	query := fmt.Sprintf("INSERT INTO %s (client_id, total_price) VALUES ($1, $2) RETURNING id", ordersTable)
+	query := fmt.Sprintf("INSERT INTO %s (client_id, total_price) VALUES ($1, $2) RETURNING id;", ordersTable)
 	if err := tx.QueryRow(ctx, query, clientId, totalPrice).Scan(&id); err != nil {
 		or.logger.ErrorLog.Err(err).Msg(err.Error())
 		return 0, err
@@ -61,7 +61,7 @@ func (or *OrderRepository) PlaceAnOrder(ctx context.Context, tx pgx.Tx, clientId
 }
 
 func (or *OrderRepository) AddDelivery(ctx context.Context, tx pgx.Tx, orderId int, address string, floor int) error {
-	query := fmt.Sprintf("INSERT INTO %s (order_id, address, floor) VALUES ($1, $2, $3)", deliveriesTable)
+	query := fmt.Sprintf("INSERT INTO %s (order_id, address, floor) VALUES ($1, $2, $3);", deliveriesTable)
 	_, err := tx.Exec(ctx, query, orderId, address, floor)
 	if err != nil {
 		or.logger.ErrorLog.Err(err).Msg(err.Error())
@@ -72,7 +72,7 @@ func (or *OrderRepository) AddDelivery(ctx context.Context, tx pgx.Tx, orderId i
 }
 
 func (or *OrderRepository) AddSelfPickups(ctx context.Context, tx pgx.Tx, orderId int) error {
-	query := fmt.Sprintf("INSERT INTO %s (order_id) VALUES ($1)", selfPickupsTable)
+	query := fmt.Sprintf("INSERT INTO %s (order_id) VALUES ($1);", selfPickupsTable)
 	_, err := tx.Exec(ctx, query, orderId)
 	if err != nil {
 		or.logger.ErrorLog.Err(err).Msg(err.Error())
@@ -86,7 +86,7 @@ func (or *OrderRepository) TotalAmountOfOrders(ctx context.Context, tx pgx.Tx, o
 	var totalSum float64
 
 	query := fmt.Sprintf("SELECT price FROM %s WHERE id = $1", mealsTable)
-	queryCheckExistence := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = $1", mealsTable)
+	queryCheckExistence := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = $1;", mealsTable)
 
 	for _, order := range orders {
 		var exists bool
