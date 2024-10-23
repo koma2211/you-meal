@@ -86,7 +86,7 @@ func (or *OrderRepository) TotalAmountOfOrders(ctx context.Context, tx pgx.Tx, o
 	var totalSum float64
 
 	query := fmt.Sprintf("SELECT price FROM %s WHERE id = $1", mealsTable)
-	queryCheckExistence := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = $1;", mealsTable)
+	queryCheckExistence := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = $1);", mealsTable)
 
 	for _, order := range orders {
 		var exists bool
