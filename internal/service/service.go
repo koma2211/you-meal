@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/koma2211/you-meal/internal/entities"
 	"github.com/koma2211/you-meal/internal/repository"
@@ -16,7 +17,7 @@ type Categorier interface {
 }
 
 type Customer interface {
-	AddOrder(ctx context.Context, client entities.Client) error 	
+	AddOrder(ctx context.Context, client entities.Client) error
 }
 
 type Service struct {
@@ -29,9 +30,10 @@ func NewService(
 	cacheRepo *cacherepository.CacheRepository,
 	logger *logger.Logger,
 	valid validate.Validator,
+	recievingTTL time.Duration,
 ) *Service {
 	return &Service{
 		Categorier: NewCategoryService(repo.Categorier, cacheRepo.Categorier, logger),
-		Customer: NewOrderService(repo.Customer, repo.Tr, valid, logger),
+		Customer:   NewOrderService(repo.Customer, repo.Tr, valid, logger, recievingTTL),
 	}
 }

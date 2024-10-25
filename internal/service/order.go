@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/koma2211/you-meal/internal/entities"
@@ -11,10 +12,11 @@ import (
 )
 
 type OrderService struct {
-	orderRepo repository.Customer
-	trRepo    repository.Tr
-	valid     validate.Validator
-	logger    *logger.Logger
+	orderRepo    repository.Customer
+	trRepo       repository.Tr
+	valid        validate.Validator
+	logger       *logger.Logger
+	recievingTTL time.Duration
 }
 
 func NewOrderService(
@@ -22,6 +24,7 @@ func NewOrderService(
 	trRepo repository.Tr,
 	valid validate.Validator,
 	logger *logger.Logger,
+	recievingTTL time.Duration,
 ) *OrderService {
 	return &OrderService{
 		orderRepo: orderRepo,
@@ -67,7 +70,9 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 		return err
 	}
 
-	orderId, err := os.orderRepo.PlaceAnOrder(ctx, tx, clientId, totalPrice)
+	receivingAt := time.Now().Add(os.recievingTTL)
+
+	orderId, err := os.orderRepo.PlaceAnOrder(ctx, tx, clientId, totalPrice, receivingAt)
 	if err != nil {
 		if err := os.trRepo.Rollback(ctx, tx); err != nil {
 			os.logger.ErrorLog.Err(err).Msg(err.Error())

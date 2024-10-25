@@ -15,6 +15,7 @@ type Config struct {
 	LimitCategory    int           `yaml:"limit_category"`
 	ImagePath        string        `yaml:"image_path"`
 	CacheCategoryTTL time.Duration `yaml:"cache_category_ttl"`
+	RecievingTTL     time.Duration `yaml:"recieving_ttl"`
 	Database         `yaml:"database"`
 	HTTPServer       `yaml:"http_server"`
 	Logs             `yaml:"logs"`

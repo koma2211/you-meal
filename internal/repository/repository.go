@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -28,7 +29,7 @@ type Categorier interface {
 
 type Customer interface {
 	AddClientInfo(ctx context.Context, tx pgx.Tx, phoneNumber string, name string) (int, error)
-	PlaceAnOrder(ctx context.Context, tx pgx.Tx, clientId int, totalPrice float64) (int, error)
+	PlaceAnOrder(ctx context.Context, tx pgx.Tx, clientId int, totalPrice float64, receivingAt time.Time) (int, error)
 	AddOrderedMeals(ctx context.Context, tx pgx.Tx, orderId int, orders []entities.OrderedMeals) error
 	AddDelivery(ctx context.Context, tx pgx.Tx, orderId int, address string, floor int) error
 	AddSelfPickups(ctx context.Context, tx pgx.Tx, orderId int) error

@@ -50,7 +50,7 @@ func main() {
 	valid := validate.NewValidation()
 
 	repos := repository.NewRepository(db, logger)
-	serv := service.NewService(repos, cache, logger, valid)
+	serv := service.NewService(repos, cache, logger, valid, cfg.RecievingTTL)
 	handlers := handler.NewHandler(serv, accessLogger, cfg.Env, cfg.ImagePath, cfg.LimitCategory)
 
 	server := server.SetupServer(handlers, &cfg.HTTPServer, db, logger)
