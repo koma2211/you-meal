@@ -54,7 +54,7 @@ func (or *OrderRepository) PlaceAnOrder(ctx context.Context, tx pgx.Tx, clientId
 	var id int
 	query := fmt.Sprintf("INSERT INTO %s (client_id, total_price, recieving_at) VALUES ($1, $2, $3) RETURNING id;", ordersTable)
 	if err := tx.QueryRow(ctx, query, clientId, totalPrice, receivingAt).Scan(&id); err != nil {
-		or.logger.ErrorLog.Err(err).Msg(err.Error())
+		or.logger.ErrorLog.Err(err).Msg(fmt.Sprintf("%s:%x", err.Error(), receivingAt))
 		return 0, err
 	}
 
