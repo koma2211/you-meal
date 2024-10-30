@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/koma2211/you-meal/internal/entities"
 	"github.com/koma2211/you-meal/pkg/logger"
@@ -33,9 +34,12 @@ type Customer interface {
 	AddOrderedMeals(ctx context.Context, tx pgx.Tx, orderId int, orders []entities.OrderedMeals) error
 	AddDelivery(ctx context.Context, tx pgx.Tx, orderId int, address string, floor int) error
 	AddSelfPickups(ctx context.Context, tx pgx.Tx, orderId int) error
-	TotalAmountOfOrders(ctx context.Context, tx pgx.Tx, orders []entities.OrderedMeals) (float64, error)
 	CheckClientExistence(ctx context.Context, tx pgx.Tx, phoneNumber string) (bool, error)
 	GetClientIDByPhoneNumber(ctx context.Context, tx pgx.Tx, phoneNumber string) (int, error)
+	PrepareCheckMealExistenceManager(ctx context.Context, tx pgx.Tx) (*pgconn.StatementDescription, error)
+	CheckMealExistence(ctx context.Context, tx pgx.Tx, stmtName string, mealId int) (bool, error)
+	PrepareGetMealPriceByMealIdManager(ctx context.Context, tx pgx.Tx) (*pgconn.StatementDescription, error)
+	GetMealPriceByMealId(ctx context.Context, tx pgx.Tx, stsmtName string, mealId int) (float64, error)
 }
 
 type Tr interface {

@@ -56,10 +56,10 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 		}
 
 		os.logger.ErrorLog.Err(err).Msg(err.Error())
-		return err 
+		return err
 	}
 
-	var clientId int 
+	var clientId int
 	if !exists {
 		clientId, err = os.orderRepo.AddClientInfo(ctx, tx, client.PhoneNumber, client.Name)
 		if err != nil {
@@ -67,7 +67,7 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 				os.logger.ErrorLog.Err(err).Msg(err.Error())
 				return err
 			}
-	
+
 			os.logger.ErrorLog.Err(err).Msg(err.Error())
 			return err
 		}
@@ -78,13 +78,13 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 				os.logger.ErrorLog.Err(err).Msg(err.Error())
 				return err
 			}
-	
+
 			os.logger.ErrorLog.Err(err).Msg(err.Error())
 			return err
 		}
 	}
 
-	totalPrice, err := os.orderRepo.TotalAmountOfOrders(ctx, tx, client.Orders)
+	stmtExistence, err := os.orderRepo.PrepareCheckMealExistenceManager(ctx, tx)
 	if err != nil {
 		if err := os.trRepo.Rollback(ctx, tx); err != nil {
 			os.logger.ErrorLog.Err(err).Msg(err.Error())
@@ -93,6 +93,52 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 
 		os.logger.ErrorLog.Err(err).Msg(err.Error())
 		return err
+	}
+
+	stmtPrice, err := os.orderRepo.PrepareGetMealPriceByMealIdManager(ctx, tx)
+	if err != nil {
+		if err := os.trRepo.Rollback(ctx, tx); err != nil {
+			os.logger.ErrorLog.Err(err).Msg(err.Error())
+			return err
+		}
+
+		os.logger.ErrorLog.Err(err).Msg(err.Error())
+		return err
+	}
+
+	var totalPrice float64
+	for _, order := range client.Orders {
+		exists, err := os.orderRepo.CheckMealExistence(ctx, tx, stmtExistence.Name, order.ID)
+		if err != nil {
+			if err := os.trRepo.Rollback(ctx, tx); err != nil {
+				os.logger.ErrorLog.Err(err).Msg(err.Error())
+				return err
+			}
+
+			os.logger.ErrorLog.Err(err).Msg(err.Error())
+			return err
+		}
+
+		if !exists {
+			if err := os.trRepo.Rollback(ctx, tx); err != nil {
+				os.logger.ErrorLog.Err(err).Msg(err.Error())
+				return err
+			}
+			return entities.ErrMealNotExists
+		}
+
+		mealPrice, err := os.orderRepo.GetMealPriceByMealId(ctx, tx, stmtPrice.Name, order.ID)
+		if err != nil {
+			if err := os.trRepo.Rollback(ctx, tx); err != nil {
+				os.logger.ErrorLog.Err(err).Msg(err.Error())
+				return err
+			}
+
+			os.logger.ErrorLog.Err(err).Msg(err.Error())
+			return err
+		}
+
+		totalPrice += (mealPrice + float64(order.Quantity))
 	}
 
 	receivingAt := time.Now().Add(os.recievingTTL)

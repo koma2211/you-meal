@@ -6,9 +6,15 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/koma2211/you-meal/internal/entities"
 	"github.com/koma2211/you-meal/pkg/logger"
+)
+
+const (
+	prepareMealExistence = "prepare_meal_existence"
+	prepareMealPrice     = "prepare_meal_price"
 )
 
 type OrderRepository struct {
@@ -51,7 +57,7 @@ func (or *OrderRepository) AddClientInfo(ctx context.Context, tx pgx.Tx, phoneNu
 }
 
 func (or *OrderRepository) CheckClientExistence(ctx context.Context, tx pgx.Tx, phoneNumber string) (bool, error) {
-	var exists bool 
+	var exists bool
 
 	query := fmt.Sprintf("SELECT EXISTS (SELECT 1 FROM %s WHERE phone_number = $1)", clientsTable)
 	if err := tx.QueryRow(ctx, query, phoneNumber).Scan(&exists); err != nil {
@@ -63,11 +69,11 @@ func (or *OrderRepository) CheckClientExistence(ctx context.Context, tx pgx.Tx, 
 }
 
 func (or *OrderRepository) GetClientIDByPhoneNumber(ctx context.Context, tx pgx.Tx, phoneNumber string) (int, error) {
-	var clientId int 
+	var clientId int
 	query := fmt.Sprintf("SELECT id FROM %s WHERE phone_number = $1", clientsTable)
 	if err := tx.QueryRow(ctx, query, phoneNumber).Scan(&clientId); err != nil {
 		or.logger.ErrorLog.Err(err).Msg(err.Error())
-		return 0, err 
+		return 0, err
 	}
 
 	return clientId, nil
@@ -106,32 +112,45 @@ func (or *OrderRepository) AddSelfPickups(ctx context.Context, tx pgx.Tx, orderI
 	return nil
 }
 
-func (or *OrderRepository) TotalAmountOfOrders(ctx context.Context, tx pgx.Tx, orders []entities.OrderedMeals) (float64, error) {
-	var totalSum float64
-
-	query := fmt.Sprintf("SELECT price FROM %s WHERE id = $1", mealsTable)
-	queryCheckExistence := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = $1);", mealsTable)
-
-	for _, order := range orders {
-		var exists bool
-		if err := tx.QueryRow(ctx, queryCheckExistence, order.ID).Scan(&exists); err != nil {
-			or.logger.ErrorLog.Err(err).Msg(err.Error())
-			return 0, err
-		}
-
-		if !exists {
-			return 0, entities.ErrMealNotExists
-		}
-
-		var mealPrice float64
-		if err := tx.QueryRow(ctx, query, order.ID).Scan(&mealPrice); err != nil {
-			or.logger.ErrorLog.Err(err).Msg(err.Error())
-			return 0, err
-		}
-
-		totalSum += (mealPrice * float64(order.Quantity))
-
+func (or *OrderRepository) PrepareCheckMealExistenceManager(ctx context.Context, tx pgx.Tx) (*pgconn.StatementDescription, error) {
+	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = $1);", mealsTable)
+	stmt, err := tx.Prepare(ctx, prepareMealExistence, query)
+	if err != nil {
+		or.logger.ErrorLog.Err(err).Msg(err.Error())
+		return nil, err
 	}
 
-	return totalSum, nil
+	return stmt, nil
+}
+
+func (or *OrderRepository) CheckMealExistence(ctx context.Context, tx pgx.Tx, stmtName string, mealId int) (bool, error) {
+	var exists bool
+	if err := tx.QueryRow(ctx, stmtName, mealId).Scan(&exists); err != nil {
+		or.logger.ErrorLog.Err(err).Msg(err.Error())
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (or *OrderRepository) PrepareGetMealPriceByMealIdManager(ctx context.Context, tx pgx.Tx) (*pgconn.StatementDescription, error) {
+	query := fmt.Sprintf("SELECT price FROM %s WHERE id = $1;", mealsTable)
+	stmt, err := tx.Prepare(ctx, prepareMealPrice, query)
+	if err != nil {
+		or.logger.ErrorLog.Err(err).Msg(err.Error())
+		return nil, err
+	}
+
+	return stmt, nil
+}
+
+func (or *OrderRepository) GetMealPriceByMealId(ctx context.Context, tx pgx.Tx, stsmtName string, mealId int) (float64, error) {
+	var price float64
+	err := tx.QueryRow(ctx, stsmtName, mealId).Scan(&price)
+	if err != nil {
+		or.logger.ErrorLog.Err(err).Msg(err.Error())
+		return 0, err 
+	}
+
+	return price, nil 
 }
