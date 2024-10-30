@@ -64,7 +64,7 @@ func (or *OrderRepository) CheckClientExistence(ctx context.Context, tx pgx.Tx, 
 
 func (or *OrderRepository) GetClientIDByPhoneNumber(ctx context.Context, tx pgx.Tx, phoneNumber string) (int, error) {
 	var clientId int 
-	query := fmt.Sprintf("SELECT FROM %s WHERE phone_number = $1", clientsTable)
+	query := fmt.Sprintf("SELECT id FROM %s WHERE phone_number = $1", clientsTable)
 	if err := tx.QueryRow(ctx, query, phoneNumber).Scan(&clientId); err != nil {
 		or.logger.ErrorLog.Err(err).Msg(err.Error())
 		return 0, err 

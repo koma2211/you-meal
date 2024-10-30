@@ -16,8 +16,9 @@ env:
     IMAGE_PATH: "/root/images"
 
 concurrency:
-  group: ${{ github.ref }}
+  group: build-${{ github.ref }}
   cancel-in-progress: true
+
     
 jobs:
     test:
