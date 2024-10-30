@@ -48,7 +48,7 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 		return err
 	}
 
-	clientId, err := os.orderRepo.AddClientInfo(ctx, tx, client.PhoneNumber, client.Name)
+	exists, err := os.orderRepo.CheckClientExistence(ctx, tx, client.PhoneNumber)
 	if err != nil {
 		if err := os.trRepo.Rollback(ctx, tx); err != nil {
 			os.logger.ErrorLog.Err(err).Msg(err.Error())
@@ -56,7 +56,32 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 		}
 
 		os.logger.ErrorLog.Err(err).Msg(err.Error())
-		return err
+		return err 
+	}
+
+	var clientId int 
+	if !exists {
+		clientId, err = os.orderRepo.AddClientInfo(ctx, tx, client.PhoneNumber, client.Name)
+		if err != nil {
+			if err := os.trRepo.Rollback(ctx, tx); err != nil {
+				os.logger.ErrorLog.Err(err).Msg(err.Error())
+				return err
+			}
+	
+			os.logger.ErrorLog.Err(err).Msg(err.Error())
+			return err
+		}
+	} else {
+		clientId, err = os.orderRepo.GetClientIDByPhoneNumber(ctx, tx, client.PhoneNumber)
+		if err != nil {
+			if err := os.trRepo.Rollback(ctx, tx); err != nil {
+				os.logger.ErrorLog.Err(err).Msg(err.Error())
+				return err
+			}
+	
+			os.logger.ErrorLog.Err(err).Msg(err.Error())
+			return err
+		}
 	}
 
 	totalPrice, err := os.orderRepo.TotalAmountOfOrders(ctx, tx, client.Orders)
@@ -114,7 +139,6 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 
 			os.logger.ErrorLog.Err(err).Msg(err.Error())
 			return err
-
 		}
 	}
 

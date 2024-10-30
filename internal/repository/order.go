@@ -50,6 +50,29 @@ func (or *OrderRepository) AddClientInfo(ctx context.Context, tx pgx.Tx, phoneNu
 	return id, nil
 }
 
+func (or *OrderRepository) CheckClientExistence(ctx context.Context, tx pgx.Tx, phoneNumber string) (bool, error) {
+	var exists bool 
+
+	query := fmt.Sprintf("SELECT EXISTS (SELECT 1 FROM %s WHERE phone_number = $1)", clientsTable)
+	if err := tx.QueryRow(ctx, query, phoneNumber).Scan(&exists); err != nil {
+		or.logger.ErrorLog.Err(err).Msg(err.Error())
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (or *OrderRepository) GetClientIDByPhoneNumber(ctx context.Context, tx pgx.Tx, phoneNumber string) (int, error) {
+	var clientId int 
+	query := fmt.Sprintf("SELECT FROM %s WHERE phone_number = $1", clientsTable)
+	if err := tx.QueryRow(ctx, query, phoneNumber).Scan(&clientId); err != nil {
+		or.logger.ErrorLog.Err(err).Msg(err.Error())
+		return 0, err 
+	}
+
+	return clientId, nil
+}
+
 func (or *OrderRepository) PlaceAnOrder(ctx context.Context, tx pgx.Tx, clientId int, totalPrice float64, receivingAt time.Time) (int, error) {
 	var id int
 	query := fmt.Sprintf("INSERT INTO %s (client_id, total_price, receiving_at) VALUES ($1, $2, $3) RETURNING id;", ordersTable)

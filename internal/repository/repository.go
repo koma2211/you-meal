@@ -34,6 +34,8 @@ type Customer interface {
 	AddDelivery(ctx context.Context, tx pgx.Tx, orderId int, address string, floor int) error
 	AddSelfPickups(ctx context.Context, tx pgx.Tx, orderId int) error
 	TotalAmountOfOrders(ctx context.Context, tx pgx.Tx, orders []entities.OrderedMeals) (float64, error)
+	CheckClientExistence(ctx context.Context, tx pgx.Tx, phoneNumber string) (bool, error)
+	GetClientIDByPhoneNumber(ctx context.Context, tx pgx.Tx, phoneNumber string) (int, error)
 }
 
 type Tr interface {
