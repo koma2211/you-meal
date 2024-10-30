@@ -15,6 +15,10 @@ env:
     LOGS_PATH: "/root/logs"
     IMAGE_PATH: "/root/images"
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+    
 jobs:
     test:
         runs-on: ubuntu-latest
