@@ -16,7 +16,7 @@ type Response struct {
 func response(c *gin.Context, statusCode int, message string, data map[string]any) {
 	if statusCode != 200 && statusCode != 400 && statusCode != 404 {
 		switch message {
-		case entities.ErrEmptyBurgers.Error():
+		case entities.ErrEmptyCategories.Error():
 			statusCode = http.StatusBadRequest
 		case entities.ErrImageNotExists.Error():
 			statusCode = http.StatusBadRequest
@@ -25,6 +25,8 @@ func response(c *gin.Context, statusCode int, message string, data map[string]an
 		case entities.ErrEmptyOrder.Error():
 			statusCode = http.StatusBadRequest
 		case entities.ErrMealNotExists.Error():
+			statusCode = http.StatusBadRequest
+		case entities.ErrCategoryIdOrPageValid.Error():
 			statusCode = http.StatusBadRequest
 		}
 	}

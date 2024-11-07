@@ -9,6 +9,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const (
+	EnvLocal = "local"
+	EnvDev   = "dev"
+	EnvProd  = "prod"
+)
+
 type Config struct {
 	MigrateSource    string        `yaml:"migrate_source"`
 	RedisSource      string        `yaml:"redis_source"`
@@ -22,6 +28,7 @@ type Config struct {
 }
 
 type HTTPServer struct {
+	Environment    string        `yaml:"environment" env-default:"local"`
 	Address        string        `yaml:"address" env-default:"0.0.0.0:8080"`
 	MaxHeaderBytes int           `yaml:"max_header_bytes"`
 	ReadTimeOut    time.Duration `yaml:"read_timeout"`

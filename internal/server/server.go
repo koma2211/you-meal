@@ -31,7 +31,7 @@ func SetupServer(
 
 	httpServer := &http.Server{
 		Addr:           conf.Address,
-		Handler:        handler.Init(),
+		Handler:        handler.Init(conf),
 		ReadTimeout:    conf.ReadTimeOut,
 		WriteTimeout:   conf.WriteTimeOut,
 		IdleTimeout:    conf.IdleTimeout,

@@ -1,8 +1,16 @@
 package entities
 
+type Menu struct {
+	Categories []Category `json:"categories"`
+}
+
 type Category struct {
+	ID    string `json:"categoryId" binding:"required"`
+	Title string `json:"title" binding:"required"`
+}
+
+type MealCategory struct {
 	ID    int    `json:"id,omitempty"`
-	Title string `json:"title,omitempty"`
 	Meals []Meal `json:"meals,omitempty"`
 }
 

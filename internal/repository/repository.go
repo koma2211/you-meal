@@ -19,13 +19,16 @@ const (
 	orderedMealsTable = "ordered_meals"
 	deliveriesTable   = "deliveries"
 	selfPickupsTable  = "self_pickups"
+	ingredientsTable  = "ingredients"
 )
 
 type Categorier interface {
-	GetBurgersCategoryByPage(ctx context.Context, limit, offset int) (entities.Category, error)
-	GetBurgerIngredientsById(ctx context.Context, burgerId int) ([]entities.Ingredient, error)
-	GetNumberOfPagesByBurgers(ctx context.Context, limit int) (int, error)
+	PrepareMealIngredientsStatement(ctx context.Context, tx pgx.Tx) (*pgconn.StatementDescription, error)
+	GetMealIngredientsByMealID(ctx context.Context, tx pgx.Tx, stmtName string, mealId int) ([]entities.Ingredient, error)
+	GetMealsByCategoryID(ctx context.Context, tx pgx.Tx, categoryId int, limit, offset int) ([]entities.Meal, error)
+	GetCategories(ctx context.Context) ([]entities.Category, error)
 	CheckExistenceImage(ctx context.Context, burgerId int, fileName string) (bool, error)
+	GetNumberOfPagesMealByCategoryId(ctx context.Context, categoryId, limit int) (int, error)
 }
 
 type Customer interface {

@@ -6,7 +6,6 @@ import (
 	"github.com/koma2211/you-meal/internal/config"
 	"github.com/koma2211/you-meal/internal/handler"
 	"github.com/koma2211/you-meal/internal/repository"
-	cacherepository "github.com/koma2211/you-meal/internal/repository/cache_repository"
 	"github.com/koma2211/you-meal/internal/server"
 	"github.com/koma2211/you-meal/internal/service"
 	"github.com/koma2211/you-meal/pkg/cache/redis"
@@ -16,10 +15,18 @@ import (
 	"github.com/koma2211/you-meal/pkg/validate"
 )
 
+//	@title			YouMeal-API
+//	@version		1.0
+//	@description	This is a pet-project where you offer clients fast-food.
+//	@host			localhost:8080
+//	@BasePath		/api/v1/
 func main() {
 	cfg := config.MustLoad()
 
-	accessLogger := logger.InitAccessLog(cfg.Logs)
+	accessLogger, err := logger.InitAccessLog(cfg.Logs)
+	if err != nil {
+		log.Fatalf("error when to init access-logger: %s", err.Error())
+	}
 
 	logger, err := logger.InitLogger(cfg.Logs)
 	if err != nil {
@@ -45,7 +52,7 @@ func main() {
 		log.Fatalf("eror when  to connect redis: %s", err.Error())
 	}
 
-	cache := cacherepository.NewCacheRepository(rdb, logger, cfg.CacheCategoryTTL)
+	cache := redis.NewCache(rdb, cfg.CacheCategoryTTL)
 
 	valid := validate.NewValidation()
 

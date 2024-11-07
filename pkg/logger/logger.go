@@ -8,12 +8,6 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-const (
-	envLocal = "local"
-	envDev   = "dev"
-	envProd  = "prod"
-)
-
 type Logger struct {
 	InfoLog  zerolog.Logger
 	ErrorLog zerolog.Logger
@@ -22,9 +16,8 @@ type Logger struct {
 }
 
 func InitLogger(logs config.Logs) (*Logger, error) {
-
-	if !(logs.Env == envLocal || logs.Env == envDev || logs.Env == envProd) {
-		return nil, errors.New("env is not valid")
+	if !(logs.Env == config.EnvLocal || logs.Env == config.EnvDev || logs.Env == config.EnvProd) {
+		return nil, errors.New("env-config logger is not valid")
 	}
 
 	zeroInfo := zerolog.New(&lumberjack.Logger{
@@ -71,7 +64,11 @@ func InitLogger(logs config.Logs) (*Logger, error) {
 	}, nil
 }
 
-func InitAccessLog(logs config.Logs) zerolog.Logger {
+func InitAccessLog(logs config.Logs) (zerolog.Logger, error) {
+	if !(logs.Env == config.EnvLocal || logs.Env == config.EnvDev || logs.Env == config.EnvProd) {
+		return zerolog.Logger{}, errors.New("env-config logger is not valid")
+	}
+
 	accessLog := zerolog.New(&lumberjack.Logger{
 		Filename:   logs.AccessPath, // File name
 		MaxSize:    logs.MaxSize,    // Size in MB before file gets rotated
@@ -81,5 +78,5 @@ func InitAccessLog(logs config.Logs) zerolog.Logger {
 		LocalTime:  true,
 	}).With().Str("env", logs.Env).Caller().Timestamp().Logger()
 
-	return accessLog
+	return accessLog, nil
 }

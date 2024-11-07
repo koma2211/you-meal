@@ -2,13 +2,14 @@ package handler
 
 import (
 	"net/http"
-	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/koma2211/you-meal/docs"
+	"github.com/koma2211/you-meal/internal/config"
 	"github.com/koma2211/you-meal/internal/service"
-
 	"github.com/rs/zerolog"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/files"
 )
 
 type Handler struct {
@@ -35,27 +36,24 @@ func NewHandler(
 	}
 }
 
-func (h *Handler) Init() *gin.Engine {
+func (h *Handler) Init(cfg *config.HTTPServer) *gin.Engine {
 	if h.env != "local" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// Cors default...
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.AllowMethods = []string{"POST", "GET"}
-	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
-	config.ExposeHeaders = []string{"Content-Length"}
-	config.AllowCredentials = true
-	config.MaxAge = 1 * time.Hour
-
 	router := gin.New()
 
 	router.Use(
-		cors.New(config), 
 		h.requestLoggerHTTP(),
+		h.corsMiddleware(),
 		gin.Recovery(),
 	)
+
+	// Init swagger
+	docs.SwaggerInfo.Host = cfg.Address
+	if cfg.Environment != config.EnvProd {
+		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	// Init router
 	router.GET("/ping", func(c *gin.Context) {
@@ -78,6 +76,7 @@ func (h *Handler) initAPI(router *gin.Engine) {
 		{
 			h.initCategoryHandler(v1)
 			h.initOrderHandler(v1)
+			h.initMealHandler(api)
 		}
 	}
 

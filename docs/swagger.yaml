@@ -1,0 +1,172 @@
+basePath: /api/v1/
+definitions:
+  entities.Client:
+    properties:
+      address:
+        type: string
+      floor:
+        type: integer
+      isDelivery:
+        type: boolean
+      name:
+        type: string
+      orders:
+        items:
+          $ref: '#/definitions/entities.OrderedMeals'
+        type: array
+      phoneNumber:
+        type: string
+    required:
+    - isDelivery
+    - name
+    - orders
+    - phoneNumber
+    type: object
+  entities.OrderedMeals:
+    properties:
+      id:
+        type: integer
+      quantity:
+        type: integer
+    required:
+    - id
+    - quantity
+    type: object
+  handler.Response:
+    properties:
+      data:
+        additionalProperties: {}
+        type: object
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a pet-project where you offer clients fast-food.
+  title: YouMeal-API
+  version: "1.0"
+paths:
+  /categories/:
+    get:
+      consumes:
+      - application/json
+      description: make a request for getting all categories
+      operationId: get-all-categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get all categories
+      tags:
+      - Categories
+  /categories/{id}/meals/:
+    get:
+      consumes:
+      - application/json
+      description: make a request for getting meals by category id with pagination
+      operationId: get-meals-by-category-id
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Page meal
+        in: query
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get meals by category id
+      tags:
+      - Categories
+  /categories/{id}/meals/quantity:
+    get:
+      consumes:
+      - application/json
+      description: make a request for getting number of pages meals category id
+      operationId: get-number-of-pages-category-id
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get number of pages category id
+      tags:
+      - Categories
+  /orders/:
+    post:
+      consumes:
+      - application/json
+      description: make a request to add new order online.
+      operationId: place-an-order
+      parameters:
+      - description: send client info
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/entities.Client'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get place an order
+      tags:
+      - Orders
+swagger: "2.0"

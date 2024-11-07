@@ -19,6 +19,7 @@ image_path: "/images"
 limit_category: 3
 
 http_server:
+  env: "local"
   address: "localhost:8080"
   read_timeout: 15s
   write_timeout: 15s

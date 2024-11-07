@@ -20,6 +20,7 @@ recieving_ttl: 1h
 image_path: "/images/"
 
 http_server:
+  env: "prod"
   address: "0.0.0.0:8080"
   read_timeout: 15s
   write_timeout: 15s
