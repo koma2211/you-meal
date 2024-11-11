@@ -76,7 +76,7 @@ func (h *Handler) initAPI(router *gin.Engine) {
 		{
 			h.initCategoryHandler(v1)
 			h.initOrderHandler(v1)
-			h.initMealHandler(api)
+			h.initMealHandler(v1)
 		}
 	}
 
