@@ -138,7 +138,7 @@ func (os *OrderService) AddOrder(ctx context.Context, client entities.Client) er
 			return err
 		}
 
-		totalPrice += (mealPrice + float64(order.Quantity))
+		totalPrice += (mealPrice * float64(order.Quantity))
 	}
 
 	receivingAt := time.Now().Add(os.recievingTTL)
