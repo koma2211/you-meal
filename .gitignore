@@ -2,3 +2,4 @@ logs
 *.rdb
 nginx
 .DS_Store
+.env
