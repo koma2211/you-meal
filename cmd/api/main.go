@@ -9,17 +9,16 @@ import (
 	"github.com/koma2211/you-meal/internal/server"
 	"github.com/koma2211/you-meal/internal/service"
 	"github.com/koma2211/you-meal/pkg/cache/redis"
-	"github.com/koma2211/you-meal/pkg/database/migration"
 	"github.com/koma2211/you-meal/pkg/database/postgres"
 	"github.com/koma2211/you-meal/pkg/logger"
 	"github.com/koma2211/you-meal/pkg/validate"
 )
 
-//	@title			YouMeal-API
-//	@version		1.0
-//	@description	This is a pet-project where you offer clients fast-food.
-//	@host			localhost:8080
-//	@BasePath		/api/v1/
+// @title			YouMeal-API
+// @version		1.0
+// @description	This is a pet-project where you offer clients fast-food.
+// @host			localhost:8080
+// @BasePath		/api/v1/
 func main() {
 	cfg := config.MustLoad()
 
@@ -31,10 +30,6 @@ func main() {
 	logger, err := logger.InitLogger(cfg.Logs)
 	if err != nil {
 		log.Fatalf("error when to init logger: %s", err.Error())
-	}
-
-	if err := migration.InitMigrationDB(cfg.MigrateSource, cfg.Database.Source); err != nil {
-		log.Fatalf("error when to init migration: %s", err.Error())
 	}
 
 	dbConfig, err := postgres.SetupPostgresDBConfig(cfg.Database)
